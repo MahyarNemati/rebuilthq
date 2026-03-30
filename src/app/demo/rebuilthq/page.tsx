@@ -4,6 +4,8 @@ import { useState } from "react";
 import ChatWidget from "@/components/ChatWidget";
 import Link from "next/link";
 
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "";
+
 type ContentResult = {
   type: string;
   results: string[];
@@ -23,7 +25,7 @@ export default function RebuiltHQDemo() {
     setResults(null);
 
     try {
-      const res = await fetch("/api/content/generate", {
+      const res = await fetch(`${API_HOST}/api/content/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: contentType, product, audience }),

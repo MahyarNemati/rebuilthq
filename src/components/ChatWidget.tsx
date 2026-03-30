@@ -9,6 +9,8 @@ type Message = {
   content: string;
 };
 
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "";
+
 type ChatWidgetProps = {
   tenantSlug: string;
   primaryColor?: string;
@@ -56,7 +58,7 @@ export default function ChatWidget({
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch(`${API_HOST}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
