@@ -4,6 +4,8 @@ import { useState } from "react";
 import ChatWidget from "@/components/ChatWidget";
 import Link from "next/link";
 
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "";
+
 export default function RamezGhalyLawDemo() {
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -20,7 +22,7 @@ export default function RamezGhalyLawDemo() {
       formData.append("file", file);
       formData.append("tenantSlug", "ramezghalylaw");
 
-      const res = await fetch("/api/docs/upload", {
+      const res = await fetch(`${API_HOST}/api/docs/upload`, {
         method: "POST",
         body: formData,
       });
