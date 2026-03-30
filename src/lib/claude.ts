@@ -59,4 +59,4 @@ export async function generateContent(
   return response.split("---").map((s) => s.trim()).filter(Boolean);
 }
 
-export { anthropic };
+// anthropic client kept private to this module

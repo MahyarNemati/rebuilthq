@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { generateContent } from "@/lib/claude";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitedResponse } from "@/lib/auth";
 
 const GenerateSchema = z.object({
   type: z.enum(["ad_copy", "seo", "social", "email"]),
@@ -11,6 +13,10 @@ const GenerateSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    const { allowed } = rateLimit(`content:${ip}`, 5, 60_000);
+    if (!allowed) return rateLimitedResponse();
+
     const body = GenerateSchema.parse(await req.json());
 
     const prompt = `Product/Service: ${body.product}
@@ -30,7 +36,7 @@ Generate compelling ${body.type.replace("_", " ")} for this product/service.`;
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
     }
-    console.error("Content generation error:", err);
+    console.error("Content generation error:", err instanceof Error ? err.message : "Unknown error");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
