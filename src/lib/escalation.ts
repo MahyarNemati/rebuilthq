@@ -30,10 +30,9 @@ export async function escalateConversation(
     }
   }
 
-  // Send email notification (simplified — use a proper email service in production)
+  // Email notification placeholder — integrate SendGrid/Resend in production
   if (contactEmail) {
     // TODO: Integrate with SendGrid/Resend for email notifications
-    console.log(`Email escalation to ${contactEmail}: ${summary}`);
   }
 }
 

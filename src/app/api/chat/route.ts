@@ -3,10 +3,12 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { tenants, conversations, messages } from "@/lib/db/schema";
 import { chat, type ChatMessage } from "@/lib/claude";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { lookupOrder, getProducts, formatProductsForContext } from "@/lib/shopify";
 import { escalateConversation, captureLead } from "@/lib/escalation";
 import { queryDocuments } from "@/lib/documents";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitedResponse } from "@/lib/auth";
 
 const ChatRequestSchema = z.object({
   tenantSlug: z.string().min(1),
@@ -18,6 +20,11 @@ const ChatRequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 15 requests per minute per IP
+    const ip = getClientIp(req);
+    const { allowed } = rateLimit(`chat:${ip}`, 15, 60_000);
+    if (!allowed) return rateLimitedResponse();
+
     const body = ChatRequestSchema.parse(await req.json());
 
     // Get tenant
@@ -62,11 +69,13 @@ export async function POST(req: NextRequest) {
       content: body.message,
     });
 
-    // Get conversation history
+    // Get conversation history (bounded to last 50 messages)
     const history = await db
       .select()
       .from(messages)
-      .where(eq(messages.conversationId, conversation.id));
+      .where(eq(messages.conversationId, conversation.id))
+      .orderBy(desc(messages.createdAt))
+      .limit(50);
 
     // Build context based on tenant type
     let systemPrompt = tenant.systemPrompt;
@@ -179,7 +188,7 @@ export async function POST(req: NextRequest) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
     }
-    console.error("Chat error:", err);
+    console.error("Chat error:", err instanceof Error ? err.message : "Unknown error");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

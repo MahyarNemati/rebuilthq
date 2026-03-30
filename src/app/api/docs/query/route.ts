@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { tenants } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { queryDocuments } from "@/lib/documents";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitedResponse } from "@/lib/auth";
 
 const QuerySchema = z.object({
   tenantSlug: z.string().min(1),
@@ -12,6 +14,11 @@ const QuerySchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 queries per minute per IP
+    const ip = getClientIp(req);
+    const { allowed } = rateLimit(`docquery:${ip}`, 10, 60_000);
+    if (!allowed) return rateLimitedResponse();
+
     const body = QuerySchema.parse(await req.json());
 
     const [tenant] = await db
@@ -34,7 +41,7 @@ export async function POST(req: NextRequest) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
     }
-    console.error("Query error:", err);
+    console.error("Query error:", err instanceof Error ? err.message : "Unknown error");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
