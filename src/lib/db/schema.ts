@@ -94,6 +94,44 @@ export const knowledgeBase = pgTable("knowledge_base", {
   index("kb_tenant_idx").on(table.tenantId),
 ]);
 
+// ============== BOOKINGS ==============
+export const bookings = pgTable("bookings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  company: text("company"),
+  notes: text("notes"),
+  date: text("date").notNull(), // ISO date string YYYY-MM-DD
+  time: text("time").notNull(), // e.g. "10:00"
+  timezone: text("timezone").notNull().default("America/Toronto"),
+  status: text("status", { enum: ["confirmed", "cancelled", "completed", "no_show"] }).default("confirmed").notNull(),
+  meetingUrl: text("meeting_url"),
+  calendarEventId: text("calendar_event_id"),
+  reminderSent: boolean("reminder_sent").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => [
+  index("booking_date_idx").on(table.date),
+  index("booking_email_idx").on(table.email),
+]);
+
+// ============== AVAILABILITY CONFIG ==============
+export const availabilityConfig = pgTable("availability_config", {
+  id: serial("id").primaryKey(),
+  dayOfWeek: integer("day_of_week").notNull(), // 0=Sun, 1=Mon...6=Sat
+  startTime: text("start_time").notNull(), // "09:00"
+  endTime: text("end_time").notNull(), // "17:00"
+  slotDurationMinutes: integer("slot_duration_minutes").notNull().default(30),
+  isActive: boolean("is_active").default(true),
+});
+
+// ============== BLOCKED DATES ==============
+export const blockedDates = pgTable("blocked_dates", {
+  id: serial("id").primaryKey(),
+  date: text("date").notNull(), // YYYY-MM-DD
+  reason: text("reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ============== TYPES ==============
 export type TenantConfig = {
   shopifyDomain?: string;
