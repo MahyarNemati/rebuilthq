@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+import ScrollCanvas from "@/components/ScrollCanvas";
+import MagneticCard from "@/components/MagneticCard";
 gsap.registerPlugin(ScrollTrigger);
 
 const CASE_STUDIES = [
@@ -130,14 +131,31 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function Home() {
   const mainRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+
+  // Cursor glow follower
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+    const onMove = (e: MouseEvent) => {
+      cursor.style.left = e.clientX + "px";
+      cursor.style.top = e.clientY + "px";
+      cursor.style.opacity = "1";
+    };
+    const onLeave = () => { cursor.style.opacity = "0"; };
+    window.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseleave", onLeave);
+    return () => { window.removeEventListener("mousemove", onMove); document.removeEventListener("mouseleave", onLeave); };
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".hero-line", { y: 80, opacity: 0, duration: 1, ease: "power3.out", stagger: 0.12, delay: 0.2 });
-      gsap.from(".hero-sub", { y: 30, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.8 });
-      gsap.from(".hero-cta", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out", delay: 1.1 });
-      gsap.from(".hero-stat", { y: 20, opacity: 0, duration: 0.5, ease: "power2.out", stagger: 0.1, delay: 1.3 });
-      gsap.from(".free-banner", { y: -20, opacity: 0, duration: 0.6, ease: "power2.out", delay: 1.6 });
+      // Hero entrance with more dramatic stagger
+      gsap.from(".hero-line", { y: 100, opacity: 0, duration: 1.2, ease: "power4.out", stagger: 0.15, delay: 0.3 });
+      gsap.from(".hero-sub", { y: 40, opacity: 0, duration: 1, ease: "power3.out", delay: 1 });
+      gsap.from(".hero-cta", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out", delay: 1.3 });
+      gsap.from(".hero-stat", { y: 30, opacity: 0, duration: 0.6, ease: "power3.out", stagger: 0.12, delay: 1.5 });
+      gsap.from(".free-banner", { scale: 0.9, opacity: 0, duration: 0.8, ease: "back.out(1.7)", delay: 1.8 });
 
       gsap.utils.toArray<HTMLElement>(".reveal-text").forEach((el) => {
         gsap.to(el, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" } });
@@ -169,6 +187,8 @@ export default function Home() {
 
   return (
     <div ref={mainRef} className="min-h-screen">
+      {/* Cursor glow follower */}
+      <div ref={cursorRef} className="cursor-glow hidden md:block" style={{ opacity: 0 }} />
 
       {/* ========== NAV ========== */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]/85 backdrop-blur-xl">
@@ -291,14 +311,14 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {SERVICES.map((service) => (
-              <div key={service.title} className="glass-card rounded-2xl p-8 reveal-card group">
+              <MagneticCard key={service.title} className="glass-card rounded-2xl p-8 reveal-card group">
                 <div className="flex items-start justify-between mb-5">
                   <span className="text-[36px] font-bold text-[var(--border)]" style={{ fontFamily: "var(--font-mono)", lineHeight: 1 }}>{service.icon}</span>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--border)" strokeWidth="2" className="group-hover:stroke-[var(--accent)] group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300"><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
                 </div>
                 <h3 className="text-lg font-bold mb-2 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{service.title}</h3>
                 <p className="text-[var(--text-secondary)] leading-relaxed text-[14px]">{service.description}</p>
-              </div>
+              </MagneticCard>
             ))}
           </div>
         </div>
@@ -353,27 +373,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ========== HOW IT WORKS ========== */}
-      <section className="py-32 px-6 bg-[var(--charcoal)] text-white relative overflow-hidden">
-        <div className="absolute inset-0 dots-bg opacity-10" />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="mb-20">
-            <p className="section-label reveal-text mb-4 parallax-slow !text-[var(--accent)]">How It Works</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight reveal-text" style={{ fontFamily: "var(--font-display)" }}>From first call to<br />live in four steps.</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              { step: "01", title: "Free Consultation", desc: "We learn your business, identify where AI adds the most value, and show you what's possible. No charge, no obligation." },
-              { step: "02", title: "Build & Train", desc: "We build your custom Claude integration and train it on your data — products, policies, brand voice, workflows." },
-              { step: "03", title: "Test & Refine", desc: "You test the system with real scenarios. We iterate until it handles your edge cases perfectly." },
-              { step: "04", title: "Deploy & Support", desc: "Go live with monitoring, analytics, and ongoing support. We maintain and improve the system continuously." },
-            ].map((item) => (
-              <div key={item.step} className="reveal-card">
-                <span className="text-[48px] font-bold block mb-4" style={{ fontFamily: "var(--font-mono)", color: "rgba(255,255,255,0.08)" }}>{item.step}</span>
-                <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-heading)" }}>{item.title}</h3>
-                <p className="text-white/50 text-[15px] leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+      {/* ========== HOW IT WORKS — SCROLL CANVAS ========== */}
+      <section className="scroll-canvas-section min-h-[300vh] relative">
+        <ScrollCanvas />
+        <div className="sticky top-0 h-screen flex items-center justify-center z-10">
+          <div className="max-w-5xl mx-auto px-6 text-center">
+            <p className="section-label reveal-text mb-4 !text-[var(--accent)]">How It Works</p>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-16 text-white" style={{ fontFamily: "var(--font-display)" }}>
+              From first call to<br />live in four steps.
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {[
+                { step: "01", title: "Free Consultation", desc: "We learn your business and show you what's possible." },
+                { step: "02", title: "Build & Train", desc: "Custom Claude integration trained on your data." },
+                { step: "03", title: "Test & Refine", desc: "Real scenario testing until it's perfect." },
+                { step: "04", title: "Deploy & Support", desc: "Go live with monitoring and ongoing support." },
+              ].map((item) => (
+                <div key={item.step} className="reveal-card text-left">
+                  <span className="text-[48px] font-bold block mb-4" style={{ fontFamily: "var(--font-mono)", color: "rgba(255,255,255,0.08)" }}>{item.step}</span>
+                  <h3 className="text-xl font-bold mb-2 text-white" style={{ fontFamily: "var(--font-heading)" }}>{item.title}</h3>
+                  <p className="text-white/50 text-[15px] leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

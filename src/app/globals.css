@@ -258,3 +258,75 @@ body::after {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+
+/* ============ MAGNETIC CARD ============ */
+.magnetic-card {
+  position: relative;
+  will-change: transform;
+}
+
+/* ============ SCROLL-SYNCED CANVAS ============ */
+.scroll-canvas-section {
+  position: relative;
+  background: var(--charcoal);
+  color: white;
+}
+
+.scroll-canvas-section canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ============ TEXT MASK REVEAL ============ */
+.text-mask {
+  overflow: hidden;
+}
+
+.text-mask > * {
+  display: block;
+}
+
+/* ============ SMOOTH COUNTER ============ */
+@property --num {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
+/* ============ HORIZONTAL SCROLL ============ */
+.h-scroll-card {
+  flex-shrink: 0;
+  width: 85vw;
+  max-width: 700px;
+}
+
+@media (min-width: 768px) {
+  .h-scroll-card {
+    width: 45vw;
+    max-width: 600px;
+  }
+}
+
+/* ============ SPLIT TEXT LINE ============ */
+.split-line {
+  overflow: hidden;
+  display: block;
+}
+
+.split-line > span {
+  display: inline-block;
+}
+
+/* ============ CURSOR GLOW (custom cursor) ============ */
+.cursor-glow {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,87,34,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s;
+}
