@@ -56,6 +56,81 @@ const FAQS = [
   { q: "Can I try it before committing?", a: "Yes! Your first consultation is completely free. We'll analyze your business, recommend the right AI integration, and show you a live demo of what it would look like. No obligation." },
 ];
 
+const BOOKING_URL = "/book"; // TODO: replace with your in-house Calendly URL when ready
+
+const USE_CASES = [
+  {
+    role: "E-Commerce Store Owner",
+    emoji: "🛍️",
+    problem: "Drowning in repetitive customer questions about shipping, returns, and product details.",
+    solution: "AI support agent trained on your entire product catalog answers 80% of questions instantly — order tracking, sizing, ingredients, shipping times. Customers get instant help 24/7, you save 30+ hours per week.",
+    tags: ["Shopify", "WooCommerce", "Chat Widget"],
+  },
+  {
+    role: "Lawyer / Law Firm Partner",
+    emoji: "⚖️",
+    problem: "Hours spent manually reviewing contracts and extracting key clauses for every client.",
+    solution: "Upload any contract or legal document — AI instantly extracts key dates, obligations, termination clauses, and flags unusual terms. What took 2 hours now takes 2 minutes.",
+    tags: ["Document Analysis", "RAG", "PDF Processing"],
+  },
+  {
+    role: "Real Estate Agent / Broker",
+    emoji: "🏠",
+    problem: "Missing leads because you can't respond to every website inquiry within minutes.",
+    solution: "AI chatbot on your site qualifies buyers instantly — budget, timeline, neighborhood preferences, pre-approval status. Sends you a Slack notification with a full lead profile. You only talk to serious buyers.",
+    tags: ["Lead Qualification", "Chat Bot", "Slack Alerts"],
+  },
+  {
+    role: "Marketing Agency Owner",
+    emoji: "📢",
+    problem: "Producing first-draft ad copy, social posts, and SEO content for dozens of clients is a bottleneck.",
+    solution: "Content engine trained on each client's brand voice generates ad copy, blog intros, social captions, and email subject lines in seconds. Your team edits and polishes instead of writing from scratch.",
+    tags: ["Content Generation", "Brand Voice", "Multi-Client"],
+  },
+  {
+    role: "Medical / Dental Clinic Manager",
+    emoji: "🏥",
+    problem: "Front desk overwhelmed with appointment scheduling calls and insurance questions.",
+    solution: "AI assistant handles appointment booking, insurance verification questions, pre-visit instructions, and post-visit follow-ups. Escalates complex cases to your team with full context.",
+    tags: ["Appointment Booking", "Patient Support", "Escalation"],
+  },
+  {
+    role: "SaaS Founder / Product Manager",
+    emoji: "💻",
+    problem: "Support tickets piling up as you scale. Users churn because they can't find answers fast enough.",
+    solution: "AI support agent trained on your docs, changelog, and knowledge base resolves tier-1 tickets instantly. Integrates with your help desk. Reduces ticket volume by 60%+ while improving CSAT.",
+    tags: ["Help Desk", "Knowledge Base", "Ticket Deflection"],
+  },
+  {
+    role: "Restaurant / Hospitality Owner",
+    emoji: "🍽️",
+    problem: "Constant calls and DMs asking about menu items, hours, reservations, and dietary options.",
+    solution: "Chat widget on your website and Google listing answers every question — full menu knowledge, real-time hours, dietary filters, reservation links. Works in multiple languages.",
+    tags: ["Menu AI", "Multilingual", "Google Integration"],
+  },
+  {
+    role: "HR Director / People Ops",
+    emoji: "👥",
+    problem: "Employees constantly asking the same HR questions — PTO policies, benefits, onboarding steps.",
+    solution: "Internal AI assistant connected to your HR docs, employee handbook, and benefits portal. Employees get instant, accurate answers via Slack. Saves your HR team 20+ hours per week.",
+    tags: ["Internal Bot", "Slack", "Employee Self-Service"],
+  },
+  {
+    role: "Financial Advisor / Accountant",
+    emoji: "📊",
+    problem: "Spending too much time on initial client intake and basic financial questions.",
+    solution: "AI assistant gathers financial information during intake, answers common tax and planning questions, and prepares structured client briefs before your first meeting. You show up prepared.",
+    tags: ["Client Intake", "Document Prep", "Financial Q&A"],
+  },
+  {
+    role: "Construction / Trades Business Owner",
+    emoji: "🔨",
+    problem: "Losing jobs because you can't respond to quote requests fast enough while on-site.",
+    solution: "AI chatbot captures project details — scope, timeline, budget range, photos — and sends you a structured lead brief. Follows up automatically if you're busy. Never lose a lead to slow response time again.",
+    tags: ["Quote Capture", "Auto Follow-Up", "Lead Brief"],
+  },
+];
+
 const LOGOS = ["Anthropic", "Claude API", "Shopify", "Next.js", "PostgreSQL", "TypeScript", "Vercel", "Supabase"];
 
 function ContactForm() {
@@ -198,15 +273,16 @@ export default function Home() {
             <span className="font-bold text-lg tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>RebuiltHQ</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-[14px] text-[var(--text-secondary)]" style={{ fontFamily: "var(--font-heading)" }}>
+            <a href="#use-cases" className="hover:text-[var(--text)] transition-colors">Use Cases</a>
             <a href="#services" className="hover:text-[var(--text)] transition-colors">Services</a>
             <a href="#work" className="hover:text-[var(--text)] transition-colors">Work</a>
             <a href="#pricing" className="hover:text-[var(--text)] transition-colors">Pricing</a>
             <a href="#faq" className="hover:text-[var(--text)] transition-colors">FAQ</a>
           </div>
-          <a href="#contact" className="btn-primary !py-2.5 !px-6 !text-sm">
-            Free Consultation
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </a>
+          <Link href={BOOKING_URL} className="btn-primary !py-2.5 !px-6 !text-sm">
+            Book Free Call
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          </Link>
         </div>
       </nav>
 
@@ -234,11 +310,11 @@ export default function Home() {
             RebuiltHQ builds custom AI solutions powered by Anthropic&apos;s Claude — customer support bots, document processors, sales agents, and content engines. Deployed in under two weeks. Your first consultation is on us.
           </p>
           <div className="hero-cta flex flex-col sm:flex-row gap-4 mb-20">
-            <a href="#contact" className="btn-primary text-base">
-              Book Free Consultation
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
-            <a href="#work" className="btn-secondary text-base">See Our Work</a>
+            <Link href={BOOKING_URL} className="btn-primary text-base">
+              Book Free Call
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </Link>
+            <a href="#use-cases" className="btn-secondary text-base">See How We Help</a>
           </div>
           <div className="flex flex-wrap gap-12 md:gap-20">
             {[{ value: "3", label: "Live Clients" }, { value: "Free", label: "First Consult" }, { value: "24/7", label: "AI Availability" }, { value: "<2wk", label: "Go-Live Time" }].map((stat) => (
@@ -294,6 +370,59 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-6"><div className="glow-line" /></div>
+
+      {/* ========== USE CASES — WHO WE HELP ========== */}
+      <section id="use-cases" className="py-32 px-6 bg-[var(--bg-warm)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-16">
+            <p className="section-label reveal-text mb-4 parallax-slow">Who We Help</p>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 reveal-text" style={{ fontFamily: "var(--font-display)" }}>
+              AI that works for<br />your specific business.
+            </h2>
+            <p className="text-[var(--text-secondary)] text-lg max-w-2xl reveal-text">
+              Every business is different. Here&apos;s how we help 10 types of professionals save time, close more deals, and serve customers better with Claude AI.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {USE_CASES.map((uc) => (
+              <MagneticCard key={uc.role} className="glass-card rounded-2xl p-7 reveal-card group !bg-white">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--accent-bg)] flex items-center justify-center text-2xl flex-shrink-0">
+                    {uc.emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-[16px] mb-1.5 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+                      {uc.role}
+                    </h3>
+                    <p className="text-[var(--text-muted)] text-[13px] mb-3 leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                      <strong className="text-[var(--text-secondary)]">Problem:</strong> {uc.problem}
+                    </p>
+                    <p className="text-[var(--text-secondary)] text-[13px] leading-relaxed mb-3">
+                      <strong className="text-[var(--text)]">How we help:</strong> {uc.solution}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {uc.tags.map((tag) => (
+                        <span key={tag} className="tag !text-[10px] !py-0.5 !px-2">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </MagneticCard>
+            ))}
+          </div>
+
+          <div className="text-center mt-14 reveal-fade">
+            <p className="text-[var(--text-secondary)] mb-5">Don&apos;t see your industry? We&apos;ve built AI for dozens of verticals.</p>
+            <Link href={BOOKING_URL} className="btn-primary">
+              Book a Free Call — We&apos;ll Show You What&apos;s Possible
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </Link>
           </div>
         </div>
       </section>
@@ -434,10 +563,10 @@ export default function Home() {
               ))}
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#contact" className="btn-primary flex-1 justify-center">
-                Book Free Consultation
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </a>
+              <Link href={BOOKING_URL} className="btn-primary flex-1 justify-center">
+                Book Free Call
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </Link>
             </div>
             <div className="mt-6 pt-6 border-t border-[var(--border)] flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[var(--accent-bg)] flex items-center justify-center flex-shrink-0">
@@ -491,6 +620,14 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              {/* Direct booking button */}
+              <div className="mt-8 pt-8 border-t border-[var(--border)]">
+                <p className="text-sm text-[var(--text-muted)] mb-3" style={{ fontFamily: "var(--font-mono)" }}>Prefer to book directly?</p>
+                <Link href={BOOKING_URL} className="btn-primary">
+                  Book a Time on Our Calendar
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                </Link>
+              </div>
             </div>
             <div>
               <ContactForm />
@@ -526,11 +663,11 @@ export default function Home() {
             <div>
               <h4 className="font-semibold text-sm mb-4" style={{ fontFamily: "var(--font-heading)" }}>Company</h4>
               <div className="space-y-2.5 text-sm text-[var(--text-secondary)]">
+                <a href="#use-cases" className="block hover:text-[var(--text)] transition-colors">Use Cases</a>
                 <a href="#work" className="block hover:text-[var(--text)] transition-colors">Case Studies</a>
                 <a href="#pricing" className="block hover:text-[var(--text)] transition-colors">Pricing</a>
                 <a href="#faq" className="block hover:text-[var(--text)] transition-colors">FAQ</a>
-                <a href="#contact" className="block hover:text-[var(--text)] transition-colors">Contact</a>
-                <Link href="/admin" className="block hover:text-[var(--text)] transition-colors">Dashboard</Link>
+                <Link href={BOOKING_URL} className="block text-[var(--accent)] hover:underline transition-colors font-medium">Book Free Call</Link>
               </div>
             </div>
           </div>
